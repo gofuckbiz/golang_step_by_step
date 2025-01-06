@@ -7,7 +7,10 @@ import (
 
 func hello(w http.ResponseWriter, request *http.Request) {
 
-	fmt.Fprintf(w, "Hello go")
+	if _, err := fmt.Fprintf(w, "Hello go"); err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
 }
 
 func headers(w http.ResponseWriter, request *http.Request) {
@@ -24,6 +27,10 @@ func main() {
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/headers", headers)
 
-	http.ListenAndServe(":8080", nil)
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+
+		fmt.Printf("Error starting server:%v\n", err)
+		return
+	}
 
 }
